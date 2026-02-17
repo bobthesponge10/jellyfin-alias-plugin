@@ -8,6 +8,14 @@
         "category": "General",
         "versions": [
             {
+                "version": "0.1.0.2",
+                "changelog": "changelog\n",
+                "targetAbi": "10.11.0.0",
+                "sourceUrl": "https://github.com/bobthesponge10/jellyfin-alias-plugin/releases/download/0.1.0.3/music-alias-resolver_0.1.0.2.zip",
+                "checksum": "2daa73d457f691bbcbd7a4a8f8fa4f9a",
+                "timestamp": "2026-02-17T23:04:02Z"
+            },
+            {
                 "version": "0.1.0.0",
                 "changelog": "changelog\n",
                 "targetAbi": "10.11.0.0",
