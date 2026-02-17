@@ -11,5 +11,9 @@ category: "General"
 owner: "Bobthesponge10"
 artifacts:
 - "Jellyfin.Plugin.AliasResolver.dll"
+- "IpaDic/char.bin"
+- "IpaDic/matrix.bin"
+- "IpaDic/sys.dic"
+- "IpaDic/unk.dic"
 changelog: >
   changelog
