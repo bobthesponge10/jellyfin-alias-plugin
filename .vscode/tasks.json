@@ -23,6 +23,8 @@
         "--configuration=Debug",
         "${workspaceFolder}/${config:pluginName}.sln",
         "/property:GenerateFullPaths=true",
+        "/p:DebugType=None",
+        "/p:DebugSymbols=false",
         "/consoleloggerparameters:NoSummary"
       ],
       "group": "build",
@@ -61,7 +63,9 @@
       "windows": {
         "args": [
           "./${config:pluginName}/bin/Debug/net9.0/publish/*",
-          "${config:jellyfinWindowsDataDir}/plugins/${config:pluginName}/"
+          "${config:jellyfinWindowsDataDir}/plugins/${config:pluginName}/",
+          "-Recurse",
+          "-Force"
         ]
       },
       "linux": {
