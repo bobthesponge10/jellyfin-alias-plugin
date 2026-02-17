@@ -14,4 +14,4 @@ artifacts:
   - IpaDic/matrix.bin
   - IpaDic/sys.dic
   - IpaDic/unk.dic
-changelog: Initial Release with basic features
+changelog: Initial Release
