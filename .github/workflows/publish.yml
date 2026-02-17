@@ -128,17 +128,25 @@ jobs:
         with:
           name: version-artifact
 
-      - name: Update manifest.json
-        run: |
-          jprm repo add ./ ./*.zip --plugin-url "${{ needs.upload.outputs.release_url }}"
-
-      - name: Update build.yaml
+      - name: Update build.yaml Version
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: 'build.yaml'
           propertyPath: 'version'
           value: ${{ github.event.release.name }}
           commitChange: false
+
+      - name: Update build.yaml Changelog
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'build.yaml'
+          propertyPath: 'changelog'
+          value: ${{ github.event.release.body  }}
+          commitChange: false
+
+      - name: Update manifest.json
+        run: |
+          jprm repo add ./ ./*.zip --plugin-url "${{ needs.upload.outputs.release_url }}"
 
       - name: Commit and Push manifest.json
         run: |
