@@ -16,17 +16,17 @@ jobs:
       - name: Set Version
         uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed -L --update "Project/PropertyGroup/Version" -v "${{ github.event.release.name }}" "Directory.Build.props"
+          args: ed -L --update "/Project/PropertyGroup/Version" -v "${{ github.event.release.name }}" "Directory.Build.props"
 
       - name: Set AssemblyVersion
         uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed -L --update "Project/PropertyGroup/AssemblyVersion" -v "${{ github.event.release.name }}" "Directory.Build.props"
+          args: ed -L --update "/Project/PropertyGroup/AssemblyVersion" -v "${{ github.event.release.name }}" "Directory.Build.props"
 
       - name: Set FileVersion
         uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed -L --update "Project/PropertyGroup/FileVersion" -v "${{ github.event.release.name }}" "Directory.Build.props"
+          args: ed -L --update "/Project/PropertyGroup/FileVersion" -v "${{ github.event.release.name }}" "Directory.Build.props"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
