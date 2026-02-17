@@ -13,6 +13,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
+      - name: Set Version
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed -L --update "Project/PropertyGroup/Version" -v "${{ github.event.release.name }}" "Directory.Build.props"
+
+      - name: Set AssemblyVersion
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed -L --update "Project/PropertyGroup/AssemblyVersion" -v "${{ github.event.release.name }}" "Directory.Build.props"
+
+      - name: Set FileVersion
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed -L --update "Project/PropertyGroup/FileVersion" -v "${{ github.event.release.name }}" "Directory.Build.props"
+
       - name: Setup .NET
         uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
         with:
@@ -32,6 +47,14 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.jprm.outputs.artifact }}
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: version-artifact
+          retention-days: 30
+          if-no-files-found: error
+          path: Directory.Build.props
+
   upload:
     needs:
       - build
@@ -45,6 +68,11 @@ jobs:
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: build-artifact
+
+      - name: Download Artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: version-artifact
 
       - name: Prepare GH Release Assets
         run: |-
@@ -60,13 +88,13 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./*.zip
-          
+
       - name: Upload GH Release md5
         uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e # v1.9.2
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./*.md5
-          
+
       - name: Upload GH Release sha256
         uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e # v1.9.2
         with:
@@ -84,26 +112,46 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
+
       - name: Setup jprm
         run: |
           pip install jprm==1.1.0
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           # Checkout the 'master' branch to push the manifest update.
           ref: "master"
+
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
+
+      - name: Download Artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: version-artifact
+
       - name: Update manifest.json
         run: |
           jprm repo add ./ ./*.zip --plugin-url "${{ needs.upload.outputs.release_url }}"
+
+      - name: Update build.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'build.yaml'
+          propertyPath: 'version'
+          value: ${{ github.event.release.name }}
+          commitChange: false
+
       - name: Commit and Push manifest.json
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add manifest.json
+          git add build.yaml
+          git add Directory.Build.props
           # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit."
