@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "guid": "1f2651b1-0793-4504-b1b1-5e4de18ba892",
+        "name": "Music Alias Resolver",
+        "description": "Checks if Albums, Tracks, and Artists have english aliases.\n",
+        "overview": "Gets english name for music.",
+        "owner": "Bobthesponge10",
+        "category": "General",
+        "versions": [
+            {
+                "version": "0.1.0.0",
+                "changelog": "changelog\n",
+                "targetAbi": "10.11.0.0",
+                "sourceUrl": "https://github.com/bobthesponge10/jellyfin-alias-plugin/releases/download/0.1.0.0/music-alias-resolver_0.1.0.0.zip",
+                "checksum": "6fdabad0de0002a17969f33152934bab",
+                "timestamp": "2026-02-17T21:30:18Z"
+            }
+        ]
+    }
+]
