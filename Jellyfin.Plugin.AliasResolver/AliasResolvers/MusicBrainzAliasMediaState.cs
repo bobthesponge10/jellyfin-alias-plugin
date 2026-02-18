@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Model.Entities;
 
@@ -10,6 +11,7 @@ namespace Jellyfin.Plugin.AliasResolver;
 public class MusicBrainzAliasMediaState
 {
     private string delimiter = "|";
+    private string dtformat = "M/d/yyyy h:mm:ss tt";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MusicBrainzAliasMediaState"/> class.
@@ -29,7 +31,7 @@ public class MusicBrainzAliasMediaState
             Status = MusicBrainzAliasStatus.Unknown;
         }
 
-        if (split_status.Length > 1 && DateTime.TryParse(split_status[1], out DateTime datetime_result))
+        if (split_status.Length > 1 && DateTime.TryParseExact(split_status[1], dtformat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime datetime_result))
         {
             UpdatedTime = datetime_result;
         }
@@ -69,7 +71,16 @@ public class MusicBrainzAliasMediaState
     /// <returns>The state string.</returns>
     public string AsString()
     {
-        return Status.ToString() + delimiter + (UpdatedTime!.ToString() ?? string.Empty) + delimiter + (Name ?? string.Empty);
+        string output = Status.ToString() + delimiter;
+        if (UpdatedTime != null)
+        {
+            DateTime dt = (DateTime)UpdatedTime;
+            output += dt.ToString(dtformat, CultureInfo.InvariantCulture);
+        }
+
+        output += delimiter;
+        output += Name ?? string.Empty;
+        return output;
     }
 
     /// <summary>
