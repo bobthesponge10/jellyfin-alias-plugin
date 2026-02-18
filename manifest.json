@@ -8,6 +8,14 @@
         "category": "General",
         "versions": [
             {
+                "version": "0.1.0.1",
+                "changelog": "Fixed issue with missing .dlls",
+                "targetAbi": "10.11.0.0",
+                "sourceUrl": "https://github.com/bobthesponge10/jellyfin-alias-plugin/releases/download/0.1.0.1/music-alias-resolver_0.1.0.1.zip",
+                "checksum": "2d711da864ef2f924cae0ad253dd8108",
+                "timestamp": "2026-02-18T02:09:11Z"
+            },
+            {
                 "version": "0.1.0.0",
                 "changelog": "Initial Release",
                 "targetAbi": "10.11.0.0",

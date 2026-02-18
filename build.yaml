@@ -1,6 +1,6 @@
 name: Music Alias Resolver
 guid: 1f2651b1-0793-4504-b1b1-5e4de18ba892
-version: 0.1.0.0
+version: 0.1.0.1
 targetAbi: 10.11.0.0
 framework: net9.0
 overview: Gets english name for music.
@@ -20,4 +20,4 @@ artifacts:
   - IpaDic/matrix.bin
   - IpaDic/sys.dic
   - IpaDic/unk.dic
-changelog: Initial Release
+changelog: Fixed issue with missing .dlls
