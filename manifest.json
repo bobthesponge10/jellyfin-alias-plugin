@@ -8,6 +8,14 @@
         "category": "General",
         "versions": [
             {
+                "version": "0.2.0.0",
+                "changelog": "Added saving name to status.\r\n\r\nHandles musicbrainz errors",
+                "targetAbi": "10.11.0.0",
+                "sourceUrl": "https://github.com/bobthesponge10/jellyfin-alias-plugin/releases/download/0.2.0.0/music-alias-resolver_0.2.0.0.zip",
+                "checksum": "c8d213e0d81023a0127b516408090e32",
+                "timestamp": "2026-02-18T19:23:31Z"
+            },
+            {
                 "version": "0.1.0.2",
                 "changelog": "Fixed datafolder not being located properly.",
                 "targetAbi": "10.11.0.0",
