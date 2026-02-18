@@ -23,10 +23,10 @@
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Kawazu" Version="1.1.4" >
-      <IncludeAssets>compile</IncludeAssets>
+      <IncludeAssets>compile;runtime</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" >
-      <IncludeAssets>compile</IncludeAssets>
+      <IncludeAssets>compile;runtime</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
