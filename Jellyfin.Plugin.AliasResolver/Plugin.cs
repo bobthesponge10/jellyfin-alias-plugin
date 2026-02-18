@@ -46,7 +46,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// <summary>
     /// Gets path to the dictionary values.
     /// </summary>
-    public string DictPath => Path.Combine(DataFolderPath, "IpaDic");
+    public string DictPath => Path.Combine(Path.GetDirectoryName(AssemblyFilePath) ?? DataFolderPath, "IpaDic");
 
     /// <summary>
     /// Gets the current plugin instance.
