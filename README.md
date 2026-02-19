@@ -2,6 +2,11 @@
 
 A Plugin that changes the name of albums, tracks, and artists to be more readable in english.
 
+## Install
+To install just add this URL to your plugin repos:
+  - [https://raw.githubusercontent.com/bobthesponge10/jellyfin-alias-plugin/refs/heads/master/manifest.json](https://raw.githubusercontent.com/bobthesponge10/jellyfin-alias-plugin/refs/heads/master/manifest.json)
+
+
 ## Workflow
 Uses musicbrainz album, track, and artist ids to look for english aliases for albums, tracks, and artists.
   - Only attempts to find a better option if ratio of english to non english characters is below set threshold and musicbrainz states script and language is not english
