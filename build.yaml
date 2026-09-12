@@ -13,9 +13,9 @@ artifacts:
   - Kawazu.dll
   - LibNMeCab.dll
   - LibNMeCab.IpaDicBin.dll
-  - MetaBrainz.Common.dll
-  - MetaBrainz.Common.Json.dll
-  - MetaBrainz.MusicBrainz.dll
+  # - MetaBrainz.Common.dll
+  # - MetaBrainz.Common.Json.dll
+  # - MetaBrainz.MusicBrainz.dll
   - IpaDic/char.bin
   - IpaDic/matrix.bin
   - IpaDic/sys.dic
