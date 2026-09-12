@@ -1,8 +1,8 @@
 name: Music Alias Resolver
 guid: 1f2651b1-0793-4504-b1b1-5e4de18ba892
 version: 0.2.0.0
-targetAbi: 10.11.0.0
-framework: net9.0
+targetAbi: 12.0.0.0
+framework: net10.0
 overview: Gets english name for music.
 description: |
   Checks if Albums, Tracks, and Artists have english aliases.

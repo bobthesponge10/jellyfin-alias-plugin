@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Jellyfin.Plugin.AliasResolver</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -16,18 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jellyfin.Controller" Version="10.11.3" >
+    <PackageReference Include="Jellyfin.Controller" Version="12.*-*" >
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="Jellyfin.Model" Version="10.11.3">
+    <PackageReference Include="Jellyfin.Model" Version="12.*-*">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Kawazu" Version="1.1.4" >
       <IncludeAssets>compile;runtime</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" >
-      <IncludeAssets>compile;runtime</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="MetaBrainz.MusicBrainz" Version="8.0.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

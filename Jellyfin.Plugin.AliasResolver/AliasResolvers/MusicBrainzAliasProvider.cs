@@ -21,11 +21,9 @@ namespace Jellyfin.Plugin.AliasResolver;
 public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
     ICustomMetadataProvider<Audio>,
     ICustomMetadataProvider<MusicArtist>,
-    IHasOrder, IForcedProvider, IDisposable, IHasItemChangeMonitor
+    IHasOrder, IForcedProvider, IHasItemChangeMonitor
 {
     private readonly ILogger<MusicBrainzAliasProvider> _logger;
-
-    private Query _musicBrainzQuery;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MusicBrainzAliasProvider"/> class.
@@ -34,9 +32,6 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
     public MusicBrainzAliasProvider(ILogger<MusicBrainzAliasProvider> logger)
     {
         _logger = logger;
-        _musicBrainzQuery = new Query();
-        ReloadConfig(null, Plugin.Instance!.Configuration);
-        Plugin.Instance!.ConfigurationChanged += ReloadConfig;
     }
 
     /// <inheritdoc />
@@ -44,29 +39,6 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
 
     /// <inheritdoc />
     public int Order => 200;
-
-    private void ReloadConfig(object? sender, BasePluginConfiguration e)
-    {
-        var configuration = (PluginConfiguration)e;
-        if (Uri.TryCreate(configuration.Server, UriKind.Absolute, out var server))
-        {
-            Query.DefaultServer = server.DnsSafeHost;
-            Query.DefaultPort = server.Port;
-            Query.DefaultUrlScheme = server.Scheme;
-        }
-        else
-        {
-            // Fallback to official server
-            _logger.LogWarning("Invalid MusicBrainz server specified, falling back to official server");
-            var defaultServer = new Uri(PluginConfiguration.DefaultServer);
-            Query.DefaultServer = defaultServer.Host;
-            Query.DefaultPort = defaultServer.Port;
-            Query.DefaultUrlScheme = defaultServer.Scheme;
-        }
-
-        Query.DelayBetweenRequests = configuration.RateLimit;
-        _musicBrainzQuery = new Query();
-    }
 
     /// <inheritdoc />
     public bool HasChanged(BaseItem item, IDirectoryService directoryService)
@@ -158,6 +130,7 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
         }
         catch (MetaBrainz.Common.HttpError)
         {
+            _logger.LogDebug("HTTP Error");
         }
 
         updateValue |= SyncAlbumArtist(item);
@@ -180,6 +153,7 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
         }
         catch (MetaBrainz.Common.HttpError)
         {
+            _logger.LogDebug("HTTP Error");
         }
 
         updateValue |= SyncAudioAlbum(item);
@@ -202,6 +176,7 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
         }
         catch (MetaBrainz.Common.HttpError)
         {
+            _logger.LogDebug("HTTP Error");
         }
 
         return updateValue;
@@ -241,7 +216,9 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
             return SyncStatusToItem(item, status, aliasResolver);
         }
 
-        var currentRelease = await _musicBrainzQuery.LookupReleaseAsync(new Guid(releaseId), Include.None, cancellationToken).ConfigureAwait(false);
+        var query = Plugin.Instance!.MusicBrainzQuery;
+
+        var currentRelease = await query.LookupReleaseAsync(new Guid(releaseId), Include.None, cancellationToken).ConfigureAwait(false);
         if (item.Name == currentRelease.Title) // Ensure linked release matches name
         {
             aliasResolver.AddString(item.Name, currentRelease.TextRepresentation!.Script, currentRelease.TextRepresentation.Language);
@@ -253,7 +230,7 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
         }
 
         // Check if album title is english or has an english alias
-        var group = await _musicBrainzQuery.LookupReleaseGroupAsync(new Guid(releaseGroupId), Include.Releases | Include.Aliases, null, cancellationToken).ConfigureAwait(false);
+        var group = await query.LookupReleaseGroupAsync(new Guid(releaseGroupId), Include.Releases | Include.Aliases, null, cancellationToken).ConfigureAwait(false);
 
         foreach (var alias in group.Aliases ?? [])
         {
@@ -319,13 +296,15 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
             return SyncStatusToItem(item, status, aliasResolver);
         }
 
-        var currentRelease = await _musicBrainzQuery.LookupReleaseAsync(new Guid(releaseId), Include.None, cancellationToken).ConfigureAwait(false);
+        var query = Plugin.Instance!.MusicBrainzQuery;
+
+        var currentRelease = await query.LookupReleaseAsync(new Guid(releaseId), Include.None, cancellationToken).ConfigureAwait(false);
         if (!aliasResolver.ShouldUpdate() && !options.RemoveOldMetadata)
         {
             return SyncStatusToItem(item, status, aliasResolver);
         }
 
-        var search = await _musicBrainzQuery.LookupRecordingAsync(new Guid(recordingId), Include.Aliases | Include.Media | Include.Releases, null, null, cancellationToken).ConfigureAwait(false);
+        var search = await query.LookupRecordingAsync(new Guid(recordingId), Include.Aliases | Include.Media | Include.Releases, null, null, cancellationToken).ConfigureAwait(false);
 
         foreach (var alias in search.Aliases ?? [])
         {
@@ -386,7 +365,9 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
             return SyncStatusToItem(item, status, aliasResolver);
         }
 
-        var artist = await _musicBrainzQuery.LookupArtistAsync(new Guid(artistId), Include.Aliases, null, null, cancellationToken).ConfigureAwait(false);
+        var query = Plugin.Instance!.MusicBrainzQuery;
+
+        var artist = await query.LookupArtistAsync(new Guid(artistId), Include.Aliases, null, null, cancellationToken).ConfigureAwait(false);
         if (!string.IsNullOrEmpty(artist.Disambiguation))
         {
             aliasResolver.AddString(artist.Disambiguation, null, null);
@@ -506,24 +487,5 @@ public class MusicBrainzAliasProvider : ICustomMetadataProvider<MusicAlbum>,
 
         item.Album = item.AlbumEntity.Name;
         return ItemUpdateType.MetadataEdit;
-    }
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary>
-    /// Dispose all resources.
-    /// </summary>
-    /// <param name="disposing">Whether to dispose.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _musicBrainzQuery.Dispose();
-        }
     }
 }
